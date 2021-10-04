@@ -74,6 +74,9 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
+  if (!req.cookies['user_id']) {
+    res.end(`You must login to create a new URL.`);
+  }
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;  // Log the POST request body to the console
   res.redirect("/urls/" + shortURL);
@@ -144,6 +147,9 @@ app.get("/urls/new", (req, res) => {
     urls: urlDatabase,
     user: users[req.cookies['user_id']]
   };
+  if (!templateVars.user) {
+    res.redirect("/urls");
+  }
   res.render("urls_new", templateVars);
 });
 
