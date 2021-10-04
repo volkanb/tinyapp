@@ -55,6 +55,9 @@ app.get("/login", (req, res) => {
     urls: urlDatabase,
     user: users[req.cookies['user_id']]
   };
+  if (templateVars.user) {
+    res.redirect("/urls");
+  }
   res.render("login", templateVars);
 });
 
@@ -122,6 +125,9 @@ app.get("/register", (req, res) => {
     urls: urlDatabase,
     user: users[req.cookies['user_id']]
   };
+  if (templateVars.user) {
+    res.redirect("/urls");
+  }
   res.render("register", templateVars);
 });
 
