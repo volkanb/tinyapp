@@ -32,6 +32,15 @@ function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
 }
 
+function getUserViaEmail(email) {
+  for (const key in users) {
+    if (users[key].email === email) {
+      return users[key];
+    }
+  }
+  return;
+}
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -73,6 +82,16 @@ app.post("/logout", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
+  if (!req.body.email || !req.body.password) {
+    res.status(400).end();
+    return;
+  }
+  const user = getUserViaEmail(req.body.email);
+  if (user) {
+    res.status(400).end();
+    return;
+  }
+
   let newUser = {
     id: generateRandomString(),
     email: req.body.email,
