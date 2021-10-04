@@ -50,6 +50,14 @@ app.get("/hello", (req, res) => {
   res.render("hello_world", templateVars);
 });
 
+app.get("/login", (req, res) => {
+  const templateVars = { 
+    urls: urlDatabase,
+    user: users[req.cookies['user_id']]
+  };
+  res.render("login", templateVars);
+});
+
 app.post("/login", (req, res) => {
   console.log('Login attempt from user: ' + req.body.username);
   res.cookie('username', req.body.username);
