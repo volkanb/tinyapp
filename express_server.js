@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const express = require("express");
 const app = express();
 const PORT = 8080;
@@ -82,7 +83,7 @@ app.post("/login", (req, res) => {
   const user = getUserViaEmail(req.body.email);
   if (!user) {
     res.status(403).end();
-  } else if (user.password !== req.body.password) {
+  } else if (!bcrypt.compareSync(req.body.password, user.password)) {
     res.status(403).end();
   }
   res.cookie('user_id', user.id);
@@ -140,7 +141,7 @@ app.post("/register", (req, res) => {
   let newUser = {
     id: generateRandomString(),
     email: req.body.email,
-    password: req.body.password
+    password: bcrypt.hashSync(req.body.password, 10)
   };
   users[newUser.id] = newUser;
   res.cookie('user_id', newUser.id);
