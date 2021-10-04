@@ -12,8 +12,7 @@ const cookieSession = require('cookie-session');
 app.use(cookieSession({
   name: 'session',
   secret: 'Al4IHh2xj',
-  // Cookie Options
-  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  maxAge: 24 * 60 * 60 * 1000
 }))
 
 const urlDatabase = {
@@ -77,7 +76,6 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  console.log('Login attempt from user: ' + req.body.email);
   const user = getUserViaEmail(req.body.email, users);
   if (!user) {
     res.status(403).end();
@@ -104,9 +102,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   if (!req.session.user_id || req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
     res.end('User authentication error!');
   }
-  console.log('Deleting ' + req.params.shortURL);
   delete urlDatabase[req.params.shortURL];
-  console.log(urlDatabase);
   res.redirect("/urls");
 });
 
@@ -116,7 +112,6 @@ app.post("/urls/:shortURL/update", (req, res) => {
   }
   urlDatabase[req.params.shortURL].longURL = req.body.longURL;
   urlDatabase[req.params.shortURL].userID = req.session.user_id;
-  console.log(urlDatabase);
   res.redirect("/urls");
 });
 
@@ -143,7 +138,6 @@ app.post("/register", (req, res) => {
   };
   users[newUser.id] = newUser;
   req.session.user_id = newUser.id;
-  console.log(users);
   res.redirect("/urls");
 });
 
@@ -163,7 +157,6 @@ app.get("/urls", (req, res) => {
     urls: urlsForUser(req.session.user_id),
     user: users[req.session.user_id]
   };
-  console.log(req.session.user_id);
   res.render("urls_index", templateVars);
 });
 
@@ -191,11 +184,10 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL].longURL;
   if (!req.params.shortURL) {
     res.end('Unable to read the short URL.')
   }
-  res.redirect(longURL);
+  res.redirect(urlDatabase[req.params.shortURL].longURL);
 });
 
 app.get("/urls.json", (req, res) => {
