@@ -44,14 +44,7 @@ const generateRandomString = () => {
   return Math.random().toString(36).substring(2, 8);
 };
 
-const getUserViaEmail = (email, usersDB) => {
-  for (const key in usersDB) {
-    if (usersDB[key].email === email) {
-      return usersDB[key];
-    }
-  }
-  return;
-};
+const { getUserViaEmail } = require('./helpers');
 
 const urlsForUser = (id) => {
   let res = {};
