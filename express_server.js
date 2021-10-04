@@ -59,8 +59,14 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  console.log('Login attempt from user: ' + req.body.username);
-  res.cookie('username', req.body.username);
+  console.log('Login attempt from user: ' + req.body.email);
+  const user = getUserViaEmail(req.body.email);
+  if (!user) {
+    res.status(403).end();
+  } else if (user.password !== req.body.password) {
+    res.status(403).end();
+  }
+  res.cookie('user_id', user.id);
   res.redirect("/urls");
 });
 
