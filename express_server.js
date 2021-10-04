@@ -56,7 +56,14 @@ const urlsForUser = (id) => {
 }
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  const templateVars = {
+    urls: urlDatabase,
+    user: users[req.session.user_id]
+  };
+  if (templateVars.user) {
+    res.redirect("/urls");
+  }
+  res.render("login", templateVars);
 });
 
 app.get("/hello", (req, res) => {
@@ -166,7 +173,7 @@ app.get("/urls/new", (req, res) => {
     user: users[req.session.user_id]
   };
   if (!templateVars.user) {
-    res.redirect("/urls");
+    res.redirect("/login");
   }
   res.render("urls_new", templateVars);
 });
