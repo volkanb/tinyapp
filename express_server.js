@@ -112,7 +112,9 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.post("/urls/:shortURL/update", (req, res) => {
-  console.log('Gonna update shortURL: ' + req.params.shortURL);
+  if (!req.cookies['user_id'] || req.cookies['user_id'] !== urlDatabase[req.params.shortURL].userID) {
+    res.end('User authentication error!');
+  }
   urlDatabase[req.params.shortURL].longURL = req.body.longURL;
   urlDatabase[req.params.shortURL].userID = req.cookies['user_id'];
   console.log(urlDatabase);
