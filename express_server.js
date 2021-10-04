@@ -44,10 +44,10 @@ const generateRandomString = () => {
   return Math.random().toString(36).substring(2, 8);
 };
 
-const getUserViaEmail = (email) => {
-  for (const key in users) {
-    if (users[key].email === email) {
-      return users[key];
+const getUserViaEmail = (email, usersDB) => {
+  for (const key in usersDB) {
+    if (usersDB[key].email === email) {
+      return usersDB[key];
     }
   }
   return;
@@ -85,7 +85,7 @@ app.get("/login", (req, res) => {
 
 app.post("/login", (req, res) => {
   console.log('Login attempt from user: ' + req.body.email);
-  const user = getUserViaEmail(req.body.email);
+  const user = getUserViaEmail(req.body.email, users);
   if (!user) {
     res.status(403).end();
   } else if (!bcrypt.compareSync(req.body.password, user.password)) {
@@ -128,7 +128,7 @@ app.post("/urls/:shortURL/update", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie('user_id');
+  req.clearCookie('user_id');
   res.redirect("/urls");
 });
 
@@ -137,7 +137,7 @@ app.post("/register", (req, res) => {
     res.status(400).end();
     return;
   }
-  const user = getUserViaEmail(req.body.email);
+  const user = getUserViaEmail(req.body.email, users);
   if (user) {
     res.status(400).end();
     return;
