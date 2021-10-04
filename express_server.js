@@ -15,31 +15,31 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-const users = { 
+const users = {
   "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
+    id: "userRandomID",
+    email: "user@example.com",
     password: "purple-monkey-dinosaur"
   },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
+  "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
     password: "dishwasher-funk"
   }
 };
 
-function generateRandomString() {
+const generateRandomString = () => {
   return Math.random().toString(36).substring(2, 8);
-}
+};
 
-function getUserViaEmail(email) {
+const getUserViaEmail = (email) => {
   for (const key in users) {
     if (users[key].email === email) {
       return users[key];
     }
   }
   return;
-}
+};
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -51,7 +51,7 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  const templateVars = { 
+  const templateVars = {
     urls: urlDatabase,
     user: users[req.cookies['user_id']]
   };
@@ -110,7 +110,7 @@ app.post("/register", (req, res) => {
     id: generateRandomString(),
     email: req.body.email,
     password: req.body.password
-  }
+  };
   users[newUser.id] = newUser;
   res.cookie('user_id', newUser.id);
   console.log(users);
@@ -118,7 +118,7 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  const templateVars = { 
+  const templateVars = {
     urls: urlDatabase,
     user: users[req.cookies['user_id']]
   };
@@ -126,7 +126,7 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { 
+  const templateVars = {
     urls: urlDatabase,
     user: users[req.cookies['user_id']]
   };
@@ -134,7 +134,7 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = { 
+  const templateVars = {
     urls: urlDatabase,
     user: users[req.cookies['user_id']]
   };
@@ -142,8 +142,8 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { 
-    shortURL: req.params.shortURL, 
+  const templateVars = {
+    shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
     user: users[req.cookies['user_id']]
   };
