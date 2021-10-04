@@ -13,16 +13,16 @@ app.use(cookieSession({
   name: 'session',
   secret: 'Al4IHh2xj',
   maxAge: 24 * 60 * 60 * 1000
-}))
+}));
 
 const urlDatabase = {
   b6UTxQ: {
-      longURL: "https://www.tsn.ca",
-      userID: "aJ48lW"
+    longURL: "https://www.tsn.ca",
+    userID: "aJ48lW"
   },
   i3BoGr: {
-      longURL: "https://www.google.ca",
-      userID: "aJ48lW"
+    longURL: "https://www.google.ca",
+    userID: "aJ48lW"
   }
 };
 
@@ -49,11 +49,11 @@ const urlsForUser = (id) => {
   let res = {};
   for (const key in urlDatabase) {
     if (urlDatabase[key].userID === id) {
-      res[key] = urlDatabase[key];      
+      res[key] = urlDatabase[key];
     }
   }
   return res;
-}
+};
 
 app.get("/", (req, res) => {
   const templateVars = {
@@ -101,7 +101,7 @@ app.post("/urls", (req, res) => {
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
     userID: req.session.user_id
-  }
+  };
   res.redirect("/urls/" + shortURL);
 });
 
@@ -192,7 +192,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   if (!req.params.shortURL) {
-    res.end('Unable to read the short URL.')
+    res.end('Unable to read the short URL.');
   }
   res.redirect(urlDatabase[req.params.shortURL].longURL);
 });
