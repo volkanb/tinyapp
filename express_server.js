@@ -102,6 +102,9 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
+  if (!req.cookies['user_id'] || req.cookies['user_id'] !== urlDatabase[req.params.shortURL].userID) {
+    res.end('User authentication error!');
+  }
   console.log('Deleting ' + req.params.shortURL);
   delete urlDatabase[req.params.shortURL];
   console.log(urlDatabase);
@@ -156,7 +159,7 @@ app.get("/register", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const templateVars = {
-    urls: urlsForUser(users[req.cookies['user_id']]),
+    urls: urlsForUser(req.cookies['user_id']),
     user: users[req.cookies['user_id']]
   };
   res.render("urls_index", templateVars);
@@ -179,7 +182,7 @@ app.get("/urls/:shortURL", (req, res) => {
     longURL: urlDatabase[req.params.shortURL].longURL,
     user: users[req.cookies['user_id']]
   };
-  if (!templateVars.user || templateVars.user !== urlDatabase[shortURL].userID) {
+  if (!templateVars.user || req.cookies['user_id'] !== urlDatabase[req.params.shortURL].userID) {
     res.end('User authentication error!');
   }
   res.render("urls_show", templateVars);
