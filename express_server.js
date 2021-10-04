@@ -11,8 +11,14 @@ const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: {
+      longURL: "https://www.tsn.ca",
+      userID: "aJ48lW"
+  },
+  i3BoGr: {
+      longURL: "https://www.google.ca",
+      userID: "aJ48lW"
+  }
 };
 
 const users = {
@@ -78,7 +84,10 @@ app.post("/urls", (req, res) => {
     res.end(`You must login to create a new URL.`);
   }
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;  // Log the POST request body to the console
+  urlDatabase[shortURL] = {
+    longURL: req.body.longURL,
+    userID: req.cookies['user_id']
+  }
   res.redirect("/urls/" + shortURL);
 });
 
@@ -91,7 +100,8 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 app.post("/urls/:shortURL/update", (req, res) => {
   console.log('Gonna update shortURL: ' + req.params.shortURL);
-  urlDatabase[req.params.shortURL] = req.body.longURL;
+  urlDatabase[req.params.shortURL].longURL = req.body.longURL;
+  urlDatabase[req.params.shortURL].userID = req.cookies['user_id'];
   console.log(urlDatabase);
   res.redirect("/urls");
 });
@@ -156,14 +166,17 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    longURL: urlDatabase[req.params.shortURL].longURL,
     user: users[req.cookies['user_id']]
   };
   res.render("urls_show", templateVars);
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL].longURL;
+  if (!req.params.shortURL) {
+    res.end('Unable to read the short URL.')
+  }
   res.redirect(longURL);
 });
 
