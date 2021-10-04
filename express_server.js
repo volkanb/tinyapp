@@ -128,7 +128,7 @@ app.post("/urls/:shortURL/update", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  req.clearCookie('user_id');
+  req.session.user_id = null;
   res.redirect("/urls");
 });
 
