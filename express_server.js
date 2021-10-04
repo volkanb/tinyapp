@@ -47,6 +47,16 @@ const getUserViaEmail = (email) => {
   return;
 };
 
+const urlsForUser = (id) => {
+  let res = {};
+  for (const key in urlDatabase) {
+    if (urlDatabase[key].userID === id) {
+      res[key] = urlDatabase[key];      
+    }
+  }
+  return res;
+}
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -146,7 +156,7 @@ app.get("/register", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const templateVars = {
-    urls: urlDatabase,
+    urls: urlsForUser(users[req.cookies['user_id']]),
     user: users[req.cookies['user_id']]
   };
   res.render("urls_index", templateVars);
@@ -169,6 +179,9 @@ app.get("/urls/:shortURL", (req, res) => {
     longURL: urlDatabase[req.params.shortURL].longURL,
     user: users[req.cookies['user_id']]
   };
+  if (!templateVars.user || templateVars.user !== urlDatabase[shortURL].userID) {
+    res.end('User authentication error!');
+  }
   res.render("urls_show", templateVars);
 });
 
