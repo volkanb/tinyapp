@@ -44,7 +44,7 @@ const users = {
 app.get("/", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
-    user: users[req.session.user_id]
+    user: users[req.session["user_id"]]
   };
   if (templateVars.user) {
     res.redirect("/urls");
@@ -60,7 +60,7 @@ app.get("/hello", (req, res) => {
 app.get("/login", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
-    user: users[req.session.user_id]
+    user: users[req.session["user_id"]]
   };
   if (templateVars.user) {
     res.redirect("/urls");
@@ -75,25 +75,25 @@ app.post("/login", (req, res) => {
   } else if (!bcrypt.compareSync(req.body.password, user.password)) {
     res.status(403).end(`Invalid username/password!`);
   } else {
-    req.session.user_id = user.id;
+    req.session["user_id"] = user.id;
     res.redirect("/urls");
   }
 });
 
 app.post("/urls", (req, res) => {
-  if (!req.session.user_id) {
+  if (!req.session["user_id"]) {
     res.end(`You must login to create a new URL.`);
   }
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
-    userID: req.session.user_id
+    userID: req.session["user_id"]
   };
   res.redirect("/urls/" + shortURL);
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
-  if (!req.session.user_id || req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
+  if (!req.session["user_id"] || req.session["user_id"] !== urlDatabase[req.params.shortURL].userID) {
     res.end('User authentication error!');
   }
   delete urlDatabase[req.params.shortURL];
@@ -101,16 +101,16 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.post("/urls/:shortURL/update", (req, res) => {
-  if (!req.session.user_id || req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
+  if (!req.session["user_id"] || req.session["user_id"] !== urlDatabase[req.params.shortURL].userID) {
     res.end('User authentication error!');
   }
   urlDatabase[req.params.shortURL].longURL = req.body.longURL;
-  urlDatabase[req.params.shortURL].userID = req.session.user_id;
+  urlDatabase[req.params.shortURL].userID = req.session["user_id"];
   res.redirect("/urls");
 });
 
 app.post("/logout", (req, res) => {
-  req.session.user_id = null;
+  req.session["user_id"] = null;
   res.redirect("/urls");
 });
 
@@ -133,14 +133,14 @@ app.post("/register", (req, res) => {
     password: bcrypt.hashSync(req.body.password, 10)
   };
   users[newUser.id] = newUser;
-  req.session.user_id = newUser.id;
+  req.session["user_id"] = newUser.id;
   res.redirect("/urls");
 });
 
 app.get("/register", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
-    user: users[req.session.user_id]
+    user: users[req.session["user_id"]]
   };
   if (templateVars.user) {
     res.redirect("/urls");
@@ -150,32 +150,32 @@ app.get("/register", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const templateVars = {
-    urls: urlsForUser(req.session.user_id, urlDatabase),
-    user: users[req.session.user_id]
+    urls: urlsForUser(req.session["user_id"], urlDatabase),
+    user: users[req.session["user_id"]]
   };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  if (!users[req.session.user_id]) {
+  if (!users[req.session["user_id"]]) {
     res.redirect("/login");
   } else {
     const templateVars = {
       urls: urlDatabase,
-      user: users[req.session.user_id]
+      user: users[req.session["user_id"]]
     };
     res.render("urls_new", templateVars);
   }
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  if (!users[req.session.user_id] || req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
+  if (!users[req.session["user_id"]] || req.session["user_id"] !== urlDatabase[req.params.shortURL].userID) {
     res.end('User authentication error!');
   } else {
     const templateVars = {
       shortURL: req.params.shortURL,
       longURL: urlDatabase[req.params.shortURL].longURL,
-      user: users[req.session.user_id]
+      user: users[req.session["user_id"]]
     };
     res.render("urls_show", templateVars);
   }
