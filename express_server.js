@@ -63,7 +63,7 @@ app.get("/", (req, res) => {
   if (templateVars.user) {
     res.redirect("/urls");
   }
-  res.render("login", templateVars);
+  res.render("user_login", templateVars);
 });
 
 app.get("/hello", (req, res) => {
@@ -79,7 +79,7 @@ app.get("/login", (req, res) => {
   if (templateVars.user) {
     res.redirect("/urls");
   }
-  res.render("login", templateVars);
+  res.render("user_login", templateVars);
 });
 
 app.post("/login", (req, res) => {
@@ -156,7 +156,7 @@ app.get("/register", (req, res) => {
   if (templateVars.user) {
     res.redirect("/urls");
   }
-  res.render("register", templateVars);
+  res.render("user_register", templateVars);
 });
 
 app.get("/urls", (req, res) => {
