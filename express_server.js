@@ -1,4 +1,4 @@
-const { getUserViaEmail } = require('./helpers');
+const { getUserViaEmail, urlsForUser, generateRandomString } = require('./helpers');
 const bcrypt = require('bcryptjs');
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
@@ -39,21 +39,6 @@ const users = {
     email: "user2@example.com",
     password: "dishwasher-funk"
   }
-};
-
-const generateRandomString = () => {
-  return Math.random().toString(36).substring(2, 8);
-};
-
-
-const urlsForUser = (id) => {
-  let res = {};
-  for (const key in urlDatabase) {
-    if (urlDatabase[key].userID === id) {
-      res[key] = urlDatabase[key];
-    }
-  }
-  return res;
 };
 
 app.get("/", (req, res) => {
@@ -165,7 +150,7 @@ app.get("/register", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const templateVars = {
-    urls: urlsForUser(req.session.user_id),
+    urls: urlsForUser(req.session.user_id, urlDatabase),
     user: users[req.session.user_id]
   };
   res.render("urls_index", templateVars);
