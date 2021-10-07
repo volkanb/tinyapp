@@ -85,12 +85,13 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   const user = getUserViaEmail(req.body.email, users);
   if (!user) {
-    res.status(403).end();
+    res.status(403).end(`Invalid username/password!`);
   } else if (!bcrypt.compareSync(req.body.password, user.password)) {
-    res.status(403).end();
+    res.status(403).end(`Invalid username/password!`);
+  } else {
+    req.session.user_id = user.id;
+    res.redirect("/urls");
   }
-  req.session.user_id = user.id;
-  res.redirect("/urls");
 });
 
 app.post("/urls", (req, res) => {
