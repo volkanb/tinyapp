@@ -130,12 +130,14 @@ app.post("/logout", (req, res) => {
 
 app.post("/register", (req, res) => {
   if (!req.body.email || !req.body.password) {
-    res.status(400).end();
+    res.status(400);
+    res.end(`Invalid username/password!`);
     return;
   }
   const user = getUserViaEmail(req.body.email, users);
   if (user) {
-    res.status(400).end();
+    res.status(400);
+    res.end(`This email address is not available!`);
     return;
   }
 
