@@ -180,15 +180,16 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = {
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL,
-    user: users[req.session.user_id]
-  };
-  if (!templateVars.user || req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
+  if (!users[req.session.user_id] || req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
     res.end('User authentication error!');
+  } else {
+    const templateVars = {
+      shortURL: req.params.shortURL,
+      longURL: urlDatabase[req.params.shortURL].longURL,
+      user: users[req.session.user_id]
+    };
+    res.render("urls_show", templateVars);
   }
-  res.render("urls_show", templateVars);
 });
 
 app.get("/u/:shortURL", (req, res) => {
